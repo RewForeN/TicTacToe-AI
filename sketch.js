@@ -6,19 +6,18 @@ const hbs = bs / 2;		// Half box size
 let humanPlayer = "X";
 let aiPlayer = "O";
 
+let board;
 let ai;
 
-let board = [
-	"", "", "",
-	"", "", "",
-	"", "", ""
-];
+let winningPlayer = null;
+let winningSquares = [];
 
 
 function setup() {
 
 	createCanvas(s, s);
 
+	board = new Board();
 	ai = new Minimax(aiPlayer);
 
 	if (aiPlayer === "X") {
@@ -29,24 +28,31 @@ function setup() {
 
 function draw() {
 
-	// Draw grid
-	line(0, bs, s, bs);
-	line(0, bs*2, s, bs*2);
-	line(bs, 0, bs, s);
-	line(bs*2, 0, bs*2, s);
+	background(30);
 
 	// Draw moves
 	for (let i = 0; i < 9; i++) {
-		let pos = getPosition(i);
+
+		let pos = getPixelPosition(i);
+
+		if (winningPlayer === humanPlayer && winningSquares.includes(i)) fill(60, 150, 200);
+		else if (winningPlayer === aiPlayer && winningSquares.includes(i)) fill(200, 56, 56);
+		else fill(255);
+
+		rect(pos.px + 2, pos.py + 2, bs - 4, bs - 4, 4);
+
+		fill(0);
 		textSize(100);
-		text(board[i], pos.x * bs + hbs - 35, pos.y * bs + hbs + 36);
+		text(board.get(i), pos.px + hbs - 35, pos.py + hbs + 36);
+
 	}
 
 }
 
 function mousePressed() {
 
-	let i;
+	if (winningPlayer !== null) return;
+
 	let x = Math.floor(mouseX / bs);
 	let y = Math.floor(mouseY / bs);
 
@@ -54,15 +60,15 @@ function mousePressed() {
 		return;
 	}
 
-	i = getIndex(x, y);
+	let i = getIndex(x, y);
+	let result = board.move(i, humanPlayer);		// Place human's move
 
-	if (board[i] !== "") {
+	if (!result || checkWinner()) {
 		return;
 	}
 
-	board[i] = humanPlayer;		// Place human's move
-	i = ai.bestMove(board);		// Get best move for AI
-	board[i] = aiPlayer;		// Place AI's move
+	ai.makeMove(board);			// Tell AI to move
+	checkWinner();
 
 }
 
@@ -78,132 +84,32 @@ function getPosition(i) {
 
 }
 
+function getPixelPosition(i) {
+
+	let pos = getPosition(i);
+
+	return {
+		px: pos.x * bs,
+		py: pos.y * bs
+	}
+
+}
+
 function getIndex(x, y) {
 
 	return (x + (y * 3));
 
 }
 
+function checkWinner() {
 
+	let r = board.winner();
 
+	console.log(r);
 
+	winningPlayer = r.player;
+	winningSquares = r.line;
 
+	return r.player !== null;
 
-
-
-
-
-
-// let board = [
-// 	['', '', ''],
-// 	['', '', ''],
-// 	['', '', '']
-// ];
-
-// let w; // = width / 3;
-// let h; // = height / 3;
-
-// let ai = 'X';
-// let human = 'O';
-// let currentPlayer = human;
-
-// function setup() {
-
-// 	createCanvas(400, 400);
-// 	w = width / 3;
-// 	h = height / 3;
-// 	bestMove();
-
-// }
-
-// function equals3(a, b, c) {
-// 	return a == b && b == c && a != '';
-// }
-
-// function checkWinner() {
-// 	let winner = null;
-
-// 	// horizontal
-// 	for (let i = 0; i < 3; i++) {
-// 		if (equals3(board[i][0], board[i][1], board[i][2])) {
-// 			winner = board[i][0];
-// 		}
-// 	}
-
-// 	// Vertical
-// 	for (let i = 0; i < 3; i++) {
-// 		if (equals3(board[0][i], board[1][i], board[2][i])) {
-// 			winner = board[0][i];
-// 		}
-// 	}
-
-// 	// Diagonal
-// 	if (equals3(board[0][0], board[1][1], board[2][2])) {
-// 		winner = board[0][0];
-// 	}
-// 	if (equals3(board[2][0], board[1][1], board[0][2])) {
-// 		winner = board[2][0];
-// 	}
-
-// 	let openSpots = 0;
-// 	for (let i = 0; i < 3; i++) {
-// 		for (let j = 0; j < 3; j++) {
-// 			if (board[i][j] == '') {
-// 				openSpots++;
-// 			}
-// 		}
-// 	}
-
-// 	if (winner == null && openSpots == 0) {
-// 		return 'tie';
-// 	} else {
-// 		return winner;
-// 	}
-// }
-
-// function mousePressed() {
-// 	if (currentPlayer == human) {
-// 		// Human make turn
-// 		let i = floor(mouseX / w);
-// 		let j = floor(mouseY / h);
-// 		// If valid turn
-// 		if (board[i][j] == '') {
-// 			board[i][j] = human;
-// 			currentPlayer = ai;
-// 			bestMove();
-// 		}
-// 	}
-// }
-
-// function draw() {
-// 	background(255);
-// 	strokeWeight(4);
-
-// 	line(w, 0, w, height);
-// 	line(w * 2, 0, w * 2, height);
-// 	line(0, h, width, h);
-// 	line(0, h * 2, width, h * 2);
-
-// 	for (let j = 0; j < 3; j++) {
-// 		for (let i = 0; i < 3; i++) {
-// 			let x = w * i + w / 2;
-// 			let y = h * j + h / 2;
-// 			let spot = board[i][j];
-// 			textSize(32);
-// 			let r = w / 4;
-// 			if (spot == human) {
-// 				noFill();
-// 				ellipse(x, y, r * 2);
-// 			} else if (spot == ai) {
-// 				line(x - r, y - r, x + r, y + r);
-// 				line(x + r, y - r, x - r, y + r);
-// 			}
-// 		}
-// 	}
-
-// 	let result = checkWinner();
-// 	if (result != null) {
-// 		noLoop();
-// 		console.log(`${result} wins!`)
-// 	}
-// }
+}

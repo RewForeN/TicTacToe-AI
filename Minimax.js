@@ -7,9 +7,16 @@ class Minimax {
 
 	}
 
-	bestMove(board) {
+	makeMove(board) {
 
-		return 0;
+		for (let i = 0; i < 9; i++) {
+			if (board.get(i) === "") {
+				board.move(i, this.player);
+				return true;
+			}
+		}
+
+		return false;
 
 	}
 
