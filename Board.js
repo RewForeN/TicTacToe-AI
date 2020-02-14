@@ -13,6 +13,10 @@ class Board {
 		return this.board[i];
 	}
 
+	set(i, p) {
+		this.board[i] = p;
+	}
+
 	move(i, p) {
 
 		if (p !== "X" && p !== "O") {
@@ -69,6 +73,24 @@ class Board {
 			player: player,
 			line: line
 		}
+
+	}
+
+	hasWinner() {
+
+		return this.winner().player !== null;
+
+	}
+	
+	clone() {
+
+		let b = new Board();
+
+		for (let i = 0; i < 9; i++) {
+			b.set(i, this.board[i]);
+		}
+
+		return b;
 
 	}
 

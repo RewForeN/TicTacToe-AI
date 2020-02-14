@@ -3,8 +3,8 @@ const s = 600;			// Board size
 const bs = s / 3;		// Box size
 const hbs = bs / 2;		// Half box size
 
-let humanPlayer = "X";
-let aiPlayer = "O";
+let humanPlayer = "O";
+let aiPlayer = "X";
 
 let board;
 let ai;
@@ -18,10 +18,10 @@ function setup() {
 	createCanvas(s, s);
 
 	board = new Board();
-	ai = new Minimax(aiPlayer);
+	ai = new Minimax(humanPlayer, aiPlayer);
 
 	if (aiPlayer === "X") {
-		move(ai.bestMove(board));
+		ai.makeMove(board);
 	}
 
 }
@@ -30,7 +30,7 @@ function draw() {
 
 	background(30);
 
-	// Draw moves
+	// Draw board and moves
 	for (let i = 0; i < 9; i++) {
 
 		let pos = getPixelPosition(i);
@@ -38,13 +38,25 @@ function draw() {
 		if (winningPlayer === humanPlayer && winningSquares.includes(i)) fill(60, 150, 200);
 		else if (winningPlayer === aiPlayer && winningSquares.includes(i)) fill(200, 56, 56);
 		else fill(255);
-
 		rect(pos.px + 2, pos.py + 2, bs - 4, bs - 4, 4);
 
-		fill(0);
-		textSize(100);
-		text(board.get(i), pos.px + hbs - 35, pos.py + hbs + 36);
+		noFill();
+		stroke(0);
+		strokeWeight(3);
+		drawPlayer(board.get(i), pos.px, pos.py);
 
+	}
+
+}
+
+function drawPlayer(p, x, y) {
+
+	if (p === "X") {
+		line(x + bs/3, y + bs/3, x + 2*bs/3, y + 2*bs/3);
+		line(x + bs/3, y + 2*bs/3, x + 2*bs/3, y + bs/3);
+	}
+	else if (p === "O") {
+		ellipse(x + bs/2, y + bs/2, bs/3);
 	}
 
 }
@@ -104,8 +116,6 @@ function getIndex(x, y) {
 function checkWinner() {
 
 	let r = board.winner();
-
-	console.log(r);
 
 	winningPlayer = r.player;
 	winningSquares = r.line;

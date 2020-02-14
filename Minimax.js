@@ -1,119 +1,69 @@
 
 class Minimax {
 
-	constructor(player) {
-
-		this.player = player;
-
+	constructor(humanPlayer, aiPlayer) {
+		this.humanPlayer = humanPlayer;
+		this.aiPlayer = aiPlayer;
 	}
 
 	makeMove(board) {
 
+		let best = {
+			index: -1,
+			score: -Infinity
+		};
+
 		for (let i = 0; i < 9; i++) {
-			if (board.get(i) === "") {
-				board.move(i, this.player);
-				return true;
+			if (board.get(i) !== "") continue;
+			let score = this.minimax(board, i, true, 1);
+			if (score > best.score) {
+				best.index = i;
+				best.score = score;
 			}
 		}
 
-		return false;
+		let result = board.move(best.index, this.aiPlayer);
+
+		if (!result) console.log("AI Could not find a move");
+
+		return result;
 
 	}
 
-	minimax() {
+	minimax(board, index, isMaximizing, depth) {
 
+		const scores = {
+			"X": 10,
+			"O": -10,
+			"T": 0
+		}
 
+		let p = (isMaximizing) ? "X" : "O";
+
+		board = board.clone();
+		board.set(index, p);
+
+		if (board.hasWinner()) return scores[board.winner().player] / depth;
+
+		let value;
+
+		if (isMaximizing) {
+			value = -Infinity;
+			for (let i = 0; i < 9; i++) {
+				if (board.get(i) !== "") continue; 
+				value = max(value, this.minimax(board, i, false, depth + 1));
+			}
+			return value;
+		}
+		else {
+			value = Infinity;
+			for (let i = 0; i < 9; i++) {
+				if (board.get(i) !== "") continue;
+				value = min(value, this.minimax(board, i, true, depth + 1));
+			}
+			return value;
+		}
 
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// function bestMove() {
-// 	// AI to make its turn
-// 	let bestScore = -Infinity;
-// 	let move;
-// 	for (let i = 0; i < 3; i++) {
-// 		for (let j = 0; j < 3; j++) {
-// 			// Is the spot available?
-// 			if (board[i][j] == '') {
-// 				board[i][j] = ai;
-// 				let score = minimax(board, 0, false);
-// 				board[i][j] = '';
-// 				if (score > bestScore) {
-// 					bestScore = score;
-// 					move = { i, j };
-// 				}
-// 			}
-// 		}
-// 	}
-// 	board[move.i][move.j] = ai;
-// 	currentPlayer = human;
-// }
-
-// let scores = {
-// 	X: 10,
-// 	O: -10,
-// 	tie: 0
-// };
-
-// function minimax(board, depth, isMaximizing) {
-// 	let result = checkWinner();
-// 	if (result !== null) {
-// 		return scores[result];
-// 	}
-
-// 	if (isMaximizing) {
-// 		let bestScore = -Infinity;
-// 		for (let i = 0; i < 3; i++) {
-// 			for (let j = 0; j < 3; j++) {
-// 				// Is the spot available?
-// 				if (board[i][j] == '') {
-// 					board[i][j] = ai;
-// 					let score = minimax(board, depth + 1, false);
-// 					board[i][j] = '';
-// 					bestScore = max(score, bestScore);
-// 				}
-// 			}
-// 		}
-// 		return bestScore;
-// 	} else {
-// 		let bestScore = Infinity;
-// 		for (let i = 0; i < 3; i++) {
-// 			for (let j = 0; j < 3; j++) {
-// 				// Is the spot available?
-// 				if (board[i][j] == '') {
-// 					board[i][j] = human;
-// 					let score = minimax(board, depth + 1, true);
-// 					board[i][j] = '';
-// 					bestScore = min(score, bestScore);
-// 				}
-// 			}
-// 		}
-// 		return bestScore;
-// 	}
-// }
