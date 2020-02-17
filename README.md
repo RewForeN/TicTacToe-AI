@@ -1,4 +1,6 @@
-NOTE: This project is not finished yet
+```diff
+- This project is not finished yet
+```
 
 # TicTacToe-Minimax
 You can [see it here](https://rewforen.github.io/TicTacToe-Minimax/) on gh-pages!
@@ -20,6 +22,6 @@ The project is mainly intended to demonstrate the algorithm.
 
 
 ## To Do
-- Create AI
-- Refine UI
+- Add some UI like buttons
 - Give player option of X or O
+- Make it look prettier
