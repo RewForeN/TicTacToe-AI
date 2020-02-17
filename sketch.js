@@ -3,8 +3,8 @@ const s = 600;			// Board size
 const bs = s / 3;		// Box size
 const hbs = bs / 2;		// Half box size
 
-let humanPlayer = "O";
-let aiPlayer = "X";
+let humanPlayer = "X";
+let aiPlayer = "O";
 
 let board;
 let ai;
@@ -38,6 +38,8 @@ function draw() {
 		if (winningPlayer === humanPlayer && winningSquares.includes(i)) fill(60, 150, 200);
 		else if (winningPlayer === aiPlayer && winningSquares.includes(i)) fill(200, 56, 56);
 		else fill(255);
+
+		noStroke();
 		rect(pos.px + 2, pos.py + 2, bs - 4, bs - 4, 4);
 
 		noFill();
