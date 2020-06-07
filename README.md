@@ -1,9 +1,5 @@
-```diff
-- This project is not finished yet
-```
-
 # TicTacToe-Minimax
-You can [see it here](https://rewforen.github.io/TicTacToe-Minimax/) on gh-pages!
+[See it here](https://rewforen.github.io/TicTacToe-Minimax/) on gh-pages!
 
 <br />
 
@@ -15,13 +11,7 @@ The project is mainly intended to demonstrate the algorithm.
 
 ## Explanation
 #### How does Tic-Tac-Toe work?
-... 
+https://en.wikipedia.org/wiki/Tic-tac-toe
 
 #### Why Tic-Tac-Toe to demonstrate Minimax?
 ...
-
-
-## To Do
-- Add some UI like buttons
-- Give player option of X or O
-- Make it look prettier
