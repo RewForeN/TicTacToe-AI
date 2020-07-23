@@ -3,9 +3,17 @@ class Minimax {
 
 	constructor(humanPlayer, aiPlayer) {
 		this.humanPlayer = humanPlayer;
-		this.aiPlayer = aiPlayer;	}
+		this.aiPlayer = aiPlayer;
+	}
 
 	makeMove(board) {
+
+		let index = this.getMove(board);
+		board.move(index, this.aiPlayer);
+
+	}
+
+	getMove(board) {
 
 		let best = {
 			index: -1,
@@ -21,26 +29,24 @@ class Minimax {
 			}
 		}
 
-		console.log(best);
-
 		if (best.score > 0) {
 			let moves = Math.round(100 / best.score) - 1;
-			console.log("AI has 100% chance of winning.\nYou will lose in " + moves + " moves.");
+			//console.log("AI has 100% chance of winning.\nYou will lose in " + moves + " moves.");
 		}
-
-		return board.move(best.index, this.aiPlayer);
+		
+		return best.index;
 
 	}
 
 	minimax(index, depth, isMaximizing, board) {
-		
+
 		// Identify current player 
 		let player = this.getPlayerFromMaximizingState(isMaximizing);
 
 		// Clone board and move at the desired index
 		board = board.clone();
 		board.set(index, player);
-		
+
 		// Check winning state
 		if (board.hasWinner()) {
 			let s = (player === this.aiPlayer) ? 100 : -100;

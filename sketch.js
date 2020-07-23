@@ -1,7 +1,6 @@
 
 const s = 600;			// Board size
 const bs = s / 3;		// Box size
-const hbs = bs / 2;		// Half box size
 
 let humanPlayer = "X";
 let aiPlayer = "O";
@@ -18,11 +17,94 @@ function setup() {
 	createCanvas(s, s);
 
 	board = new Board();
-	ai = new Minimax(humanPlayer, aiPlayer);
+	mm = new Minimax(aiPlayer, humanPlayer);
+
+	mmAITrainer = new Minimax(humanPlayer, aiPlayer);
+	ai = new NeuralNetwork(9, 11, 9);
 
 	if (aiPlayer === "X") {
 		ai.makeMove(board);
 	}
+
+	console.log("Training....");
+
+	/// TRAIN AI
+	let trainCycles = 10000;
+	let nextPercent = 0;
+	for (let i = 0; i < trainCycles; i++) {
+
+		if (100 * i / trainCycles > nextPercent) {
+			console.log("Training: " + Math.floor(100 * i / trainCycles).toString() + "% complete.");
+			nextPercent++;
+		}
+
+		board = Board.randomBoard();
+
+		let mmIndex = mmAITrainer.getMove(board);
+		let mmOutputs = [];
+		for (let j = 0; j < 9; j++) mmOutputs[j] = (j === mmIndex) ? 1: 0;
+		ai.train(board.toNNInputs(), mmOutputs);
+		
+	}
+
+	console.clear();
+	console.log("Done training!");
+
+	board = new Board();
+
+	mmtest();
+
+}
+
+let reset = false;
+
+function mmtest() {
+
+	if (reset) {
+		console.clear();
+		board = new Board();
+		reset = false;
+	}
+
+	// Alg move
+	mm.makeMove(board);
+
+	checkWinner();
+	if (winningPlayer) {
+		reset = true;
+		setTimeout(mmtest, 2000);
+		return;
+	}
+
+	setTimeout(aitest, 1000);
+
+}
+
+function aitest() {
+
+	// AI Move
+	let outputs = ai.feedforward(board.toNNInputs());
+	
+	let move = {
+		index: -1,
+		score: -Infinity
+	};
+	for (let i = 0; i < 9; i++) {
+		if (outputs[i] > move.score && board.get(i) === "") {
+			move.index = i;
+			move.score = outputs[i];
+		}
+	}
+
+	console.log("AI wants to move: " + move.index.toString());
+	board.move(move.index, aiPlayer);
+
+	checkWinner();
+	if (winningPlayer) {
+		reset = true;
+	}
+
+	setTimeout(mmtest, 1000);
 
 }
 
@@ -81,7 +163,22 @@ function mousePressed() {
 		return;
 	}
 
-	ai.makeMove(board);			// Tell AI to move
+	//ai.makeMove(board);			// Tell AI to move
+	let outputs = ai.feedforward(board.toNNInputs());
+	
+	let move = {
+		index: -1,
+		score: -Infinity
+	};
+	for (let i = 0; i < 9; i++) {
+		if (outputs[i] > move.score){
+			move.index = i;
+			move.score = outputs[i];
+		}
+	}
+
+	board.move(move.index, aiPlayer);
+
 	checkWinner();
 
 }

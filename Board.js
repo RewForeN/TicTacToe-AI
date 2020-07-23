@@ -94,4 +94,38 @@ class Board {
 
 	}
 
+	toNNInputs() {
+
+		let inputs = [];
+
+		for (let i = 0; i < 9; i++) {
+			if (this.board[i] === "X") 		inputs[i] = -1;
+			else if (this.board[i] === "O") inputs[i] = 1;
+			else 							inputs[i] = 0;
+		}
+
+		return inputs;
+
+	}
+
+	static randomBoard() {
+
+		let b = new Board();
+		let next = "X";
+
+		for (let i = 0; i < 9; i++) {
+			let p = "";
+			let r = Math.floor(Math.random() * 2);
+			if (r === 1) {
+				p = next;
+				if (next === "X") next = "O";
+				else next = "X";
+			}
+			b.set(i, p);
+		}
+
+		return b;
+
+	}
+
 }
