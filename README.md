@@ -1,5 +1,5 @@
 # TicTacToe-Minimax
-[See it here](https://rewforen.github.io/TicTacToe-Minimax/) on gh-pages!
+See it [here](https://rewforen.github.io/TicTacToe-AI/)!
 
 <br />
 
