@@ -9,9 +9,5 @@ The project is mainly intended to demonstrate the algorithm.
 
 <br />
 
-## Explanation
-#### How does Tic-Tac-Toe work?
+### How does Tic-Tac-Toe work?
 https://en.wikipedia.org/wiki/Tic-tac-toe
-
-#### Why Tic-Tac-Toe to demonstrate Minimax?
-...
